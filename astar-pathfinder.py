@@ -5,7 +5,7 @@ pygame.init()
 
 winWidth = 800
 
-rows = 40
+rows = 24
 
 screen = pygame.display.set_mode((winWidth, winWidth))
 clock = pygame.time.Clock()
@@ -57,7 +57,7 @@ class Node:
 
 def makeGrid(width, rows):
     grid = []
-    nodeSize = width // rows #px size of each node
+    nodeSize = width / rows #px size of each node (float keeps full coverage)
 
     for i in range(rows): #rows
         grid.append([])
@@ -91,11 +91,11 @@ def lowest(openList): #finds the node with the lowest f value
     return lowestNode
 
 def getNodePos(mousePos, rows, width): #getting position of the node clicked within the grid by finding the pixel coordinates of the mouse position and converting it to the index coordinates of the node
-    size = width // rows
+    size = width / rows
     x, y = mousePos
 
-    row = x // size
-    col = y // size
+    row = int(x // size)
+    col = int(y // size)
 
     return row, col
 
@@ -186,7 +186,8 @@ def main():
 
                         path.pop(0) #removing the first element of the path and the last ebcause it is the start node and end node
                         path.pop(len(path) - 1)
-                        #print(path)
+                        print(path)
+                        print(grid)
 
                         for row in grid: #for each node in the path list the color become purple
                             for node in row:
@@ -198,7 +199,6 @@ def main():
         pygame.display.flip()
 
 main()
-
 
 
 
