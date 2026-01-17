@@ -2,6 +2,9 @@ import pygame
 from pygame.locals import *
 from algorithms import dfs, bfs, a_star
 
+from queue import Queue
+import heapq
+
 pygame.init()
 
 winWidth = 800
@@ -29,11 +32,11 @@ class Node:
         self.x = self.pos[0] * size
         self.y = self.pos[1] * size
 
-        self.g = cost #distance to start node (cost to arrive)
+        self.g = cost #distance to start node (cost to arrive); have to initialize high
 
         ##for a star specifically
         self.h = 0 #distance to end node (cost to go)
-        self.f = 0 #sum of the two
+        self.f = self.g + self.h #sum of the two
         
         self.color = WHITE
     
@@ -92,8 +95,23 @@ def getNodePos(mousePos, width): #getting position of the node clicked within th
 
     return row, col
 
+def heuristic(node, end):
+        dx = end.pos[0] - node.pos[0]
+        dy = end.pos[1] - node.pos[1]
+        return dx**2 + dy**2
+
 def updateColors(grid, start, end, frontier, closed, path):
-    frontier_set = set(frontier)
+    if hasattr(frontier, "queue"):
+        frontier_items = list(frontier.queue)
+    else:
+        frontier_items = list(frontier)
+    frontier_nodes = []
+    for item in frontier_items:
+        if isinstance(item, tuple):
+            frontier_nodes.append(item[-1])
+        else:
+            frontier_nodes.append(item)
+    frontier_set = set(frontier_nodes)
     path_set = set(path)
     for row in grid:
         for node in row:
@@ -176,16 +194,24 @@ def main():
                         algorithm = a_star
 
                     #INITIALIZATION
-                    frontier = [] #treating this list as a stack, will only use append and pop (both O(1))
-                    frontier.append(start)
+                    start.g = 0
+                    if (algorithm == dfs):
+                        frontier = [] #treating this list as a stack with LIFO, will only use append and pop (both O(1))
+                        frontier.append(start)
+                    elif (algorithm == bfs):
+                        frontier = Queue() #using queue as bfs is FIFO, will only use put and get which are O(1)
+                        frontier.put(start)
+                    else:
+                        frontier = [] #this is the heap
+                        start.h = heuristic(start, end)
+                        start.f = start.g + start.h
+                        heapq.heappush(frontier, (start.f, -start.g, start.pos, start))
+
 
                     #initing the path
                     path = []
 
                     closed = set() #if node was visited, using a set so lookup is only O(1) to check if node is in it rather than list which is O(n)
-
-                    start.g = 0
-
                     algorithm_running = True
                     awaiting_algorithm = False
 
