@@ -1,6 +1,6 @@
 import pygame
 from pygame.locals import *
-from algorithms import dfs, bfs, a_star
+from search_algorithms import dfs, bfs, a_star
 
 from queue import Queue
 import heapq
