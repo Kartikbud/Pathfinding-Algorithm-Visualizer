@@ -1,6 +1,6 @@
 # A-Pathfinder-Algorithm-Visualizer
 
-Algorithm visualizer for search-based path planning algorithms: DFS, BFS, A*. Built with pygame.
+Algorithm visualizer for search-based path planning algorithms: DFS, BFS, A* and sample-based path planning algorithms: RRT, RRT*. Built with pygame.
 
 ## Setup
 
